@@ -1,10 +1,12 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import Head from 'next/head';
 
 import prisma from 'lib/prisma';
 import timeago from 'lib/timeago';
 import { getVideo, getVideos } from 'lib/data.js';
 import Video from 'components/Video';
+import Heading from 'components/Heading';
 
 export const getServerSideProps = async context => {
   let video = await getVideo(context.params.id, prisma);
@@ -28,13 +30,13 @@ const SingleVideo = ({ video, videos }) => {
 
   return (
     <>
-      <header className='h-14 flex pt-5 px-5 pb-2'>
-        <Link href={`/`}>
-          <a className='underline'>Home</a>
-        </Link>
+      <Head>
+        <title>{video.title}</title>
+        <meta name='description' content={video.title} />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
 
-        <div className='grow'></div>
-      </header>
+      <Heading />
 
       <div className='h-screen flex'>
         <div className='flex w-full md:w-2/3 flex-col mb-4 border-t border-r border-b border-3 border-black pl-0 bg-black'>

@@ -3,6 +3,7 @@ import Head from 'next/head';
 import prisma from 'lib/prisma';
 import { getVideos } from 'lib/data';
 import Videos from 'components/Videos';
+import Heading from 'components/Heading';
 
 export const getServerSideProps = async () => {
   let videos = await getVideos({}, prisma);
@@ -24,13 +25,7 @@ const Home = ({ videos }) => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <header className='h-14 flex pt-5 px-5 pb-2'>
-        <div className='text-xl'>
-          <p>YouTube Clone</p>
-        </div>
-
-        <div className='grow'></div>
-      </header>
+      <Heading />
 
       {videos.length === 0 && (
         <p className='flex justify-center mt-20'>No videos found!</p>
