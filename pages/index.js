@@ -1,15 +1,43 @@
-import Head from 'next/head'
+import Head from 'next/head';
 
-export default function Home() {
+import prisma from 'lib/prisma';
+import { getVideos } from 'lib/data';
+import Videos from 'components/Videos';
+
+export const getServerSideProps = async () => {
+  let videos = await getVideos({}, prisma);
+  videos = JSON.parse(JSON.stringify(videos));
+
+  return {
+    props: {
+      videos,
+    },
+  };
+};
+
+const Home = ({ videos }) => {
   return (
     <div>
       <Head>
-        <title></title>
-        <meta name='description' content='' />
+        <title>YouTube Clone</title>
+        <meta name='description' content='YouTube Clone' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <h1>Welcome!</h1>
+      <header className='h-14 flex pt-5 px-5 pb-2'>
+        <div className='text-xl'>
+          <p>YouTube Clone</p>
+        </div>
+
+        <div className='grow'></div>
+      </header>
+
+      {videos.length === 0 && (
+        <p className='flex justify-center mt-20'>No videos found!</p>
+      )}
+      <Videos videos={videos} />
     </div>
-  )
-}
+  );
+};
+
+export default Home;
