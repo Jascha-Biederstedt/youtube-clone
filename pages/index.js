@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 import prisma from 'lib/prisma';
 import { getVideos } from 'lib/data';
@@ -20,8 +22,16 @@ export const getServerSideProps = async () => {
 };
 
 const Home = ({ initialVideos }) => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [videos, setVideos] = useState(initialVideos);
   const [reachedEnd, setReachedEnd] = useState(initialVideos.length < amount);
+
+  if (status === 'loading') return null;
+
+  if (session && !session.user.name) {
+    router.push('/setup');
+  }
 
   return (
     <div>
