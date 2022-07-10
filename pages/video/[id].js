@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -5,6 +6,7 @@ import Head from 'next/head';
 import prisma from 'lib/prisma';
 import timeago from 'lib/timeago';
 import { getVideo, getVideos } from 'lib/data.js';
+
 import Video from 'components/Video';
 import Heading from 'components/Heading';
 
@@ -27,6 +29,21 @@ const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false });
 
 const SingleVideo = ({ video, videos }) => {
   if (!video) return <p className='text-center p-5'>Video does not exist 😞</p>;
+
+  useEffect(() => {
+    const incrementViews = async () => {
+      await fetch('/api/view', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          video: video.id,
+        }),
+      });
+    };
+    incrementViews();
+  }, []);
 
   return (
     <>
