@@ -1,11 +1,21 @@
 import { amount } from 'lib/config';
 
-const LoadMore = ({ videos, setVideos, setReachedEnd, author }) => {
+const LoadMore = ({
+  videos,
+  setVideos,
+  setReachedEnd,
+  author,
+  subscriptions,
+}) => {
   const handleBtnClick = async () => {
     const url = `/api/videos?skip=${videos.length}`;
 
     if (author) {
       url += `&author=${author.id}`;
+    }
+
+    if (subscriptions) {
+      url += `&subscriptions=${subscriptions}`;
     }
 
     const res = await fetch(url);

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
-const Heading = () => {
+const Heading = subscriptions => {
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -21,6 +21,19 @@ const Heading = () => {
       </div>
 
       <div className='grow ml-10 -mt-1'></div>
+
+      {session &&
+        (router.asPath === '/subscriptions' ? (
+          <a className='flex'>
+            <p className='mr-3 font-bold'>Subscriptions</p>
+          </a>
+        ) : (
+          <Link href={`/subscriptions`}>
+            <a className='flex'>
+              <p className='mr-3 underline'>Subscriptions</p>
+            </a>
+          </Link>
+        ))}
 
       {session && (
         <Link href={`/channel/${session.user.username}`}>
