@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 
 import prisma from 'lib/prisma';
-import { getUser, getVideos } from 'lib/data.js';
+import { getUser, getVideos, getSubscribersCount } from 'lib/data.js';
 import { amount } from 'lib/config';
 
 import Videos from 'components/Videos';
@@ -16,15 +16,21 @@ export const getServerSideProps = async context => {
   let videos = await getVideos({ author: user.id }, prisma);
   videos = JSON.parse(JSON.stringify(videos));
 
+  const subscribers = await getSubscribersCount(
+    context.params.username,
+    prisma
+  );
+
   return {
     props: {
       initialVideos: videos,
       user,
+      subscribers,
     },
   };
 };
 
-const Channel = ({ user, initialVideos }) => {
+const Channel = ({ user, initialVideos, subscribers }) => {
   const [videos, setVideos] = useState(initialVideos);
   const [reachedEnd, setReachedEnd] = useState(initialVideos.length < amount);
 
@@ -52,6 +58,11 @@ const Channel = ({ user, initialVideos }) => {
             )}
             <div className='mt-5'>
               <p className='text-lg font-bold text-white'>{user.name}</p>
+              <div className=''>
+                <div className=''>
+                  <div className='text-gray-400'>{subscribers} subscribers</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
