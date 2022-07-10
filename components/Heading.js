@@ -22,6 +22,18 @@ const Heading = () => {
 
       <div className='grow ml-10 -mt-1'></div>
 
+      {session && (
+        <Link href={`/channel/${session.user.username}`}>
+          <a className='flex'>
+            <img
+              src={session.user.image}
+              className='h-8 mr-2 mb-2 -mt-1 w-8 rounded-full'
+            />
+            <p className='mr-3'>{session.user.name}</p>
+          </a>
+        </Link>
+      )}
+
       <a
         className='flex-l border px-4 font-bold rounded-full'
         href={session ? '/api/auth/signout' : '/api/auth/signin'}
