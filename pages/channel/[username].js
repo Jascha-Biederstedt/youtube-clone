@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { useSession, getSession } from 'next-auth/react';
 
 import prisma from 'lib/prisma';
-import { getUser, getVideos, getSubscribersCount } from 'lib/data.js';
+import {
+  getUser,
+  getVideos,
+  getSubscribersCount,
+  isSubscribed,
+} from 'lib/data.js';
 import { amount } from 'lib/config';
 
 import Videos from 'components/Videos';
 import Heading from 'components/Heading';
 import LoadMore from 'components/LoadMore';
+import SubscribedButton from 'components/SubscribedButton';
 
 export const getServerSideProps = async context => {
   let user = await getUser(context.params.username, prisma);
@@ -21,18 +28,29 @@ export const getServerSideProps = async context => {
     prisma
   );
 
+  const session = await getSession(context);
+
+  let subscribed = null;
+  if (session) {
+    subscribed = await isSubscribed(session.user.username, user.id, prisma);
+  }
+
   return {
     props: {
       initialVideos: videos,
       user,
       subscribers,
+      subscribed,
     },
   };
 };
 
-const Channel = ({ user, initialVideos, subscribers }) => {
+const Channel = ({ user, initialVideos, subscribers, subscribed }) => {
   const [videos, setVideos] = useState(initialVideos);
   const [reachedEnd, setReachedEnd] = useState(initialVideos.length < amount);
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') return null;
 
   if (!user)
     return <p className='text-center p-5'>Channel does not exist 😞</p>;
@@ -64,6 +82,13 @@ const Channel = ({ user, initialVideos, subscribers }) => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className='mt-12 mr-5'>
+            {session && user.id === session.user.id ? (
+              <></>
+            ) : (
+              <SubscribedButton user={user} subscribed={subscribed} />
+            )}
           </div>
         </div>
         <div>
