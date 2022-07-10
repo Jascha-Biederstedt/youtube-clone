@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useSession, getSession } from 'next-auth/react';
 
 import prisma from 'lib/prisma';
@@ -85,7 +86,13 @@ const Channel = ({ user, initialVideos, subscribers, subscribed }) => {
           </div>
           <div className='mt-12 mr-5'>
             {session && user.id === session.user.id ? (
-              <></>
+              <>
+                <Link href={`/upload`}>
+                  <a className='bg-green-500 px-3 py-2  rounded-md'>
+                    Upload video
+                  </a>
+                </Link>
+              </>
             ) : (
               <SubscribedButton user={user} subscribed={subscribed} />
             )}
